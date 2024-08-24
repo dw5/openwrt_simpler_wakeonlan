@@ -1,19 +1,52 @@
 <?php /* optional auth wall 
-if (!isset($_SERVER['PHP_AUTH_PW'])) {
-    header('WWW-Authenticate: Basic realm="net_neat8_wol"');
+// Securely store the valid password
+$valid_password = "password";
+
+// Function to handle failed authentication
+function handle_unauthorized() {
     header('HTTP/1.0 401 Unauthorized');
-    echo 'You must enter a valid password to access this resource\n'; // IF USER HITS CANCEL
+    echo 'Not authorized.';
     exit;
 }
 
-if ($_SERVER['PHP_AUTH_PW']!="password") {
-  header('WWW-Authenticate: Basic realm="net_neat8_wol"');
-  header('HTTP/1.0 401 Unauthorized');
-  
-  error_log("Failed login attempt net_neat8_wol - IP: "$_SERVER['REMOTE_ADDR']. "PWD: ". ($_SERVER['PHP_AUTH_PW'] ?? 'unknown'));
-  sleep(2);
-  die ("Not authorized.");
-}*/
+// Check if the 'auth' parameter is present in the GET request
+if (isset($_GET['auth'])) {
+    $password = $_GET['auth'];
+    
+    // Validate the provided password
+    if ($password !== $valid_password) {
+        error_log("Failed login attempt net_neat8_wol - IP: " . $_SERVER['REMOTE_ADDR'] . " PWD: " . $password);
+        sleep(2); // Delay to prevent brute-force attacks
+        handle_unauthorized();
+    }
+} 
+// Fallback to POST request if the GET parameter is not provided
+else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
+    $password = $_POST['password'];
+    
+    // Validate the provided password
+    if ($password !== $valid_password) {
+        error_log("Failed login attempt net_neat8_wol - IP: " . $_SERVER['REMOTE_ADDR'] . " PWD: " . $password);
+        sleep(2); // Delay to prevent brute-force attacks
+        handle_unauthorized();
+    }
+} 
+// Show a basic HTML form if no password is provided via GET or POST
+else {
+    ?>
+    <html>
+    <body>
+    <form method="POST" action="">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password">
+        <input type="submit" value="Submit">
+    </form>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+*/
 ?>
 
 <?php /* (c) neat8 2024 */
@@ -131,6 +164,41 @@ function executeCommand($cmd) {
     color: #cccccc;
 }
 
+h3 {margin:0px;}
+small {margin-top:8px;}
+
+.manual-wol {
+    margin: 20px;
+    text-align: center;
+}
+
+#mac-address-input {
+    padding: 10px;
+    font-size: 1em;
+    width: 250px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+}
+
+#wol-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+  border: 1px solid #555;
+  background-color: #404040;
+    color: white;
+    transition: background-color 0.2s ease;
+}
+
+#wol-button:hover {
+    background-color: #b30000;
+}
+
+
 /* blur for privacy security or something...*/
 .device-mac{
 filter:blur(12px);
@@ -143,6 +211,10 @@ filter:blur(0px);
 </head>
 <body>
 <h3>Wake On LAN</h3>
+<div id="manual-wol" class="manual-wol">
+    <input type="text" id="mac-address-input" placeholder="Enter MAC address">
+    <button id="wol-button">Send Wake-on-LAN</button>
+</div>
     <div id="device-container" class="device-grid"><p style="text-align: center;">loading...</p></div>
 <small style="color: #1e1b1b;">&copy; neat8 2024</small>
 
@@ -187,6 +259,15 @@ filter:blur(0px);
                 alert(data);
             });
         }
+        
+        document.getElementById('wol-button').addEventListener('click', () => {
+        const macAddress = document.getElementById('mac-address-input').value.trim();
+        if (macAddress) {
+            wakeOnLan(macAddress);
+        } else {
+            alert('Please enter a valid MAC address.');
+        }
+    });
 
         // Create device cards on page load - without external json file
         //document.addEventListener('DOMContentLoaded', createDeviceCards);
