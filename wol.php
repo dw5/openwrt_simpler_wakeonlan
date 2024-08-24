@@ -198,13 +198,25 @@ small {margin-top:8px;}
     background-color: #b30000;
 }
 
+/* Adjustments for mobile */
+@media (max-width: 600px) {
+
+#mac-address-input {
+    width: 80%;
+    margin-bottom: 10px;
+}
+#wol-button {
+    width: 80%;
+}
+
+}
 
 /* blur for privacy security or something...*/
-.device-mac{
+.blur{
 filter:blur(12px);
 transition: filter 0.3s ease-in-out;
 }
-.device-mac:hover{
+.blur:hover{
 filter:blur(0px);
 }
 </style>
@@ -234,8 +246,8 @@ filter:blur(0px);
                 const deviceInfo = `
                     <div class="device-info">
                         <h2 class="device-name">${device.name}</h2>
-                        <p class="device-mac">MAC: ${device.mac_address}</p>
-						${device.status_ip ? `<p class="device-description">IP: ${device.status_ip}</p>` : ''}
+                        <p class="device-mac blur">MAC: ${device.mac_address}</p>
+						${device.status_ip ? `<p class="device-description blur">IP: ${device.status_ip}</p>` : ''}
                         ${device.description ? `<p class="device-description">${device.description}</p>` : ''}
                     </div>
                 `;

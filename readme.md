@@ -1,5 +1,9 @@
 # WOL Frontend For GL-INET edition of OpenWRT
 
+You can use exports from Wake on Lan app  
+https://github.com/Florianisme/WakeOnLan  
+https://apt.izzysoft.de/fdroid/index/apk/de.florianisme.wakeonlan  
+
 # Why?
 
 Needing to use LU-CI requires need to sign in, then use big pile list of all devices, including wifi ones (tldr: the ones I don't need),  
