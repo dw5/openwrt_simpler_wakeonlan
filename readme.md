@@ -13,6 +13,7 @@ also Luci WOL listing tends to be confusing (sometime you see hostname, sometime
 
 ```
 add wol.php to /www
+tip: or somewhere else other than /www so you won't need to reinstall everytime after firmware update
 
 opkg install php7 php7-fpm php7-mod-sockets php7-mod-json
 
@@ -38,7 +39,10 @@ nobody -> usrphpetherwake
         fastcgi_param SCRIPT_FILENAME $document_root/wol.php;
         fastcgi_param PATH_INFO $fastcgi_path_info;
     }
+```
+# Updates
 
+Updating router firmware will result in wol.php and devices.json being deleted. All you will need to do is put them back to /www (you could also install wol somewhere else so you wouldn't have to do this)
 sudo nginx -t
 
 sudo /etc/init.d/nginx restart
